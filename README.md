@@ -13,11 +13,11 @@ This support has been tested with the latest stable release of buildroot (2018.1
 How-to use it
 =============
 
-### With *PlutoSDR* tag **v2019.02**
+### With *PlutoSDR* tag **v2019.02.2**
 
 Download the tested buildroot tarball:
 ```bash
-wget https://buildroot.org/downloads/buildroot-2019.02.tar.gz
+wget https://buildroot.org/downloads/buildroot-2019.02.2.tar.gz
 ```
 
 ### Configure, build and install
