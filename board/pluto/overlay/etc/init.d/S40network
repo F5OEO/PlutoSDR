@@ -39,7 +39,7 @@ create_system_files () {
 	echo -e "auto lo\n""iface lo inet loopback\n" > $IFAC
 	echo -e "auto usb0\n""iface usb0 inet static" >> $IFAC
 	echo -e "\taddress $IPADDR\n""\tnetmask $NETMASK\n" >> $IFAC
-
+    #echo -e "\tup route add default gw 192.168.2.10\n" >> $IFAC
 	echo -e "auto eth0" >> $IFAC
 	if [ -n "$ETH_IPADDR" ]
 	then
@@ -52,26 +52,35 @@ create_system_files () {
 	### /etc/wpa.conf ###
 	if [ -n "$WLAN_SSID" ]
 	then
-		if [ -n "$WLAN_PWD" ]
-		then
-			wpa_passphrase $WLAN_SSID $WLAN_PWD > /etc/wpa.conf
-		else
-			echo "network={" > /etc/wpa.conf
-			echo "    ssid=\"$WLAN_SSID\"" >> /etc/wpa.conf
-			echo "    key_mgmt=NONE" >> /etc/wpa.conf
-			echo "}" >> /etc/wpa.conf
-		fi
+        if [ "$WLAN_SSID" == "AP" ]; then
+    # We are in access point mode
+         echo -e "auto wlan0\n" >> $IFAC
+        echo -e "iface wlan0 inet static\n" >>$IFAC
+        echo -e "address 192.168.3.1\n" >>$IFAC
+        echo -e "netmask 255.255.255.0\n" >>$IFAC
 
-		echo -e "auto wlan0" >> $IFAC
+        else
+		    if [ -n "$WLAN_PWD" ]
+		    then
+			    wpa_passphrase $WLAN_SSID $WLAN_PWD > /etc/wpa.conf
+		    else
+			    echo "network={" > /etc/wpa.conf
+			    echo "    ssid=\"$WLAN_SSID\"" >> /etc/wpa.conf
+			    echo "    key_mgmt=NONE" >> /etc/wpa.conf
+			    echo "}" >> /etc/wpa.conf
+		    fi
 
-		if [ -n "$WLAN_IPADDR" ]
-		then
-			echo -e "iface wlan0 inet static" >> $IFAC
-			echo -e "\taddress $WLAN_IPADDR\n""\tnetmask 255.255.255.0" >> $IFAC
-		else
-			echo -e "iface wlan0 inet dhcp" >> $IFAC
-		fi
-		echo -e "\twpa-conf /etc/wpa.conf\n" >> $IFAC
+		    echo -e "auto wlan0" >> $IFAC
+
+		    if [ -n "$WLAN_IPADDR" ]
+		    then
+			    echo -e "iface wlan0 inet static" >> $IFAC
+			    echo -e "\taddress $WLAN_IPADDR\n""\tnetmask 255.255.255.0" >> $IFAC
+		    else
+			    echo -e "iface wlan0 inet dhcp" >> $IFAC
+		    fi
+		    echo -e "\twpa-conf /etc/wpa.conf\n" >> $IFAC
+        fi
 	fi
 
 	### /opt/config.txt ###
@@ -111,7 +120,7 @@ create_system_files () {
 
 	### /www/index.html ###
 
-	sed -i -e "s/#IP#/$IPADDR/g" -e "s/#HOSTIP#/$IPADDR_HOST/g" -e "s/#NETMASK#/$NETMASK/g" -e "s/#HOSTNAME#/$HOSTNAME/g" -e "s/#SSID_WLAN#/$WLAN_SSID/g" -e "s/#IPADDR_WLAN#/$WLAN_IPADDR/g" -e "s/#IPADDR_ETH#/$ETH_IPADDR/g" -e "s/#NETMASK_ETH#/$ETH_NETMASK/g" /www/index.html
+	sed -i -e "s/#IP#/$IPADDR/g" -e "s/#HOSTIP#/$IPADDR_HOST/g" -e "s/#NETMASK#/$NETMASK/g" -e "s/#HOSTNAME#/$HOSTNAME/g" -e "s/#SSID_WLAN#/$WLAN_SSID/g" -e "s/#IPADDR_WLAN#/$WLAN_IPADDR/g" -e "s/#IPADDR_ETH#/$ETH_IPADDR/g" -e "s/#NETMASK_ETH#/$ETH_NETMASK/g" /www/index.html /www/img/index_*.html
 
 	}
 
