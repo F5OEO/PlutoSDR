@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-LIBIIO_PLUTO_VERSION = 0.18
-LIBIIO_PLUTO_SOURCE = libiio-$(LIBIIO_PLUTO_VERSION).tar.gz
-LIBIIO_PLUTO_SITE = $(call github,analogdevicesinc,libiio,v$(LIBIIO_PLUTO_VERSION))
+#LIBIIO_PLUTO_VERSION = 0.21
+#LIBIIO_PLUTO_SOURCE = libiio-$(LIBIIO_PLUTO_VERSION).tar.gz
+#LIBIIO_PLUTO_SITE = $(call github,analogdevicesinc,libiio,v$(LIBIIO_PLUTO_VERSION))
 
-#LIBIIO_PLUTO_VERSION = 60063cb20312c2f06cb8b33e8692e4a0a3546738
-#LIBIIO_PLUTO_SITE = https://github.com/analogdevicesinc/libiio.git
-#LIBIIO_PLUTO_SITE_METHOD = git
+LIBIIO_PLUTO_VERSION = 1c0781b6c6f27921f1dcbf2d71d75870cb545b09
+LIBIIO_PLUTO_SITE = https://github.com/analogdevicesinc/libiio.git
+LIBIIO_PLUTO_SITE_METHOD = git
 
 LIBIIO_PLUTO_INSTALL_STAGING = YES
 LIBIIO_PLUTO_LICENSE = LGPL-2.1+
