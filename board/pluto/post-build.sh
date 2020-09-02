@@ -45,6 +45,12 @@ genimage                           \
 	--outputpath "${TARGET_DIR}/opt/" \
 	--config "${GENIMAGE_CFG}"
 
+rm -Rf ${TARGET_DIR}/etc/dropbear
+
+mkdir -p ${TARGET_DIR}/mnt/jffs2
+mkdir -p ${TARGET_DIR}/mnt/msd
+mkdir -p ${TARGET_DIR}/etc/dropbear
+
 rm -f ${TARGET_DIR}/opt/boot.vfat
 rm -f ${TARGET_DIR}/etc/init.d/S99iiod
 rm -rf ${BINARIES_DIR}/msd
