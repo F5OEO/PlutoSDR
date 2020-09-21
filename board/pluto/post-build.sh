@@ -23,18 +23,22 @@ fi
 
 cp ${BOARD_DIR}/LICENSE.template ${BINARIES_DIR}/msd/LICENSE.html
 cp ${BOARD_DIR}/msd/index.html ${BINARIES_DIR}/msd/
+
 LINUX_VERS=$(cat ${BR2_CONFIG} | grep '^BR2_LINUX_KERNEL_VERSION' | cut -d\" -f 2)
 UBOOT_VERS=$(cat ${BR2_CONFIG} | grep '^BR2_TARGET_UBOOT_VERSION' | cut -d\" -f 2)
-FW_VERSION=$(cd ${BOARD_DIR} && git describe --abbrev=4 --dirty --always --tags)
+FW_VERSION=$(git -C $BR2_EXTERNAL describe  --abbrev=4 --dirty --always --tags)
 sed -i s/##DEVICE_FW##/${FW_VERSION}/g ${BINARIES_DIR}/msd/LICENSE.html
 sed -i s/##LINUX_VERSION##/${LINUX_VERS}/g ${BINARIES_DIR}/msd/LICENSE.html
 sed -i s/##UBOOT_VERSION##/${UBOOT_VERS}/g ${BINARIES_DIR}/msd/LICENSE.html
-
 
 BOARD_DIR="$(dirname $0)"
 BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-msd.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
+
+echo device-fw $FW_VERSION > ${TARGET_DIR}/opt/VERSIONS
+echo linux $LINUX_VERS >> ${TARGET_DIR}/opt/VERSIONS;)
+echo u-boot-xlnx $UBOOT_VERS >> ${TARGET_DIR}/opt/VERSIONS;)
 
 rm -rf "${GENIMAGE_TMP}"
 
