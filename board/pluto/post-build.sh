@@ -37,8 +37,8 @@ GENIMAGE_CFG="${BOARD_DIR}/genimage-msd.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 echo device-fw $FW_VERSION > ${TARGET_DIR}/opt/VERSIONS
-echo linux $LINUX_VERS >> ${TARGET_DIR}/opt/VERSIONS;)
-echo u-boot-xlnx $UBOOT_VERS >> ${TARGET_DIR}/opt/VERSIONS;)
+echo linux $LINUX_VERS >> ${TARGET_DIR}/opt/VERSIONS;
+echo u-boot-xlnx $UBOOT_VERS >> ${TARGET_DIR}/opt/VERSIONS;
 
 rm -rf "${GENIMAGE_TMP}"
 
