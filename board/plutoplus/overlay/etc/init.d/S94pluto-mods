@@ -1,0 +1,58 @@
+#!/bin/sh
+
+flash_indication_on() {
+        echo timer > /sys/class/leds/led0:green/trigger
+        echo 40 > /sys/class/leds/led0:green/delay_off
+        echo 40 > /sys/class/leds/led0:green/delay_on
+}
+
+start() {
+REBOOTNEEDED=0
+echo "Checking for maxcpus and ad9364 mods..."
+export `fw_printenv maxcpus`
+export `fw_printenv attr_val`
+export `fw_printenv mode`
+export `fw_printenv compatible`
+## Check/set dual-core mode
+if [ $maxcpus == 1 ]; then
+	flash_indication_on
+	echo "Enabling dual-core mode..."
+        fw_setenv maxcpus
+        #REBOOTNEEDED=1
+fi
+
+MODEL=$(iio_attr -C ad9361-phy,model | cut -f2 -d ' ')
+if [ "$MODEL" != "ad9361" ]; then
+echo Frequency range not yet patched $MODEL
+#REBOOTNEEDED=1
+# Modify uboot for always be a AD9361
+#fw_setenv adi_loadvals 'fdt addr ${fit_load_address} && fdt get value fdt_choosen /configurations/${fit_config}/ fdt && fdt get addr fdtaddr /images/${fdt_choosen} data && fdt addr ${fdtaddr}; if test -n ${ad936x_ext_refclk} && test ! -n ${ad936x_skip_ext_refclk}; then fdt set /clocks/clock@0 clock-frequency ${ad936x_ext_refclk}; fi; fdt get value model / model; if test -n ${ad936x_ext_refclk_override} ; then fdt set /clocks/clock@0 clock-frequency ${ad936x_ext_refclk_override}; fi; if test ${refclk_source} = internal; then fdt rm /amba/gpio@e000a000/clock_extern_en; fi; if test ${refclk_source} = external ; then fdt rm /amba/gpio@e000a000/clock_internal_en; fi; if test -n ${mode} && test ! ${mode} = 1r1t && test ! ${mode} = 2r2t; then setenv mode 1r1t; saveenv; fi; if test -n ${refclk_source} && test ! ${refclk_source} = internal && test ! ${refclk_source} = external; then setenv refclk_source internal; saveenv; fi; setenv compatible ad9361; saveenv; fdt set /amba/spi@e0006000/ad9361-phy@0 compatible ${compatible}; if test ${mode} = 1r1t ; then fdt rm /amba/spi@e0006000/ad9361-phy@0 adi,2rx-2tx-mode-enable; fi; if test -n ${cs_gpio}; then fdt set /amba/axi_quad_spi@7C430000/ cs-gpios "<0x06 ${cs_gpio} 0>"; fi;'
+fi
+
+if [ $REBOOTNEEDED == 1 ]; then
+	echo "Rebooting!"
+        pluto_reboot reset
+else
+	echo "Frequency extension and cpu already in place, no MOD needed."
+	
+fi
+}
+
+stop() {
+echo
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  *)
+	echo "Usage: $0 {start}"
+	exit 1
+esac
+
+exit $?
